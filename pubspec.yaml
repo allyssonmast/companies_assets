@@ -8,6 +8,9 @@ environment:
 dependencies: 
   cupertino_icons: ^1.0.6
   get: 4.6.6
+  google_fonts:
+  flutter_screenutil:
+  auto_route:
   flutter: 
     sdk: flutter
 
@@ -15,6 +18,8 @@ dev_dependencies:
   flutter_lints: 4.0.0
   flutter_test: 
     sdk: flutter
+  auto_route_generator:
+  build_runner:
 
 flutter: 
   uses-material-design: true
