@@ -3,7 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 var lightTheme = ThemeData(
   useMaterial3: true,
-  cardTheme: const CardTheme(clipBehavior: Clip.antiAlias),
+  cardTheme: const CardTheme(
+    clipBehavior: Clip.antiAlias,
+    color: Colors.deepPurple,
+  ),
   textTheme: GoogleFonts.latoTextTheme(),
 );
 

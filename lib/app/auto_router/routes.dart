@@ -11,5 +11,9 @@ class AppRouter extends $AppRouter {
           page: HomeViewRoute.page,
           path: HOME,
         ),
+        AutoRoute(
+          page: AssetsViewRoute.page,
+          path: ASSETSID,
+        ),
       ];
 }

@@ -10,7 +10,12 @@ dependencies:
   get: 4.6.6
   google_fonts:
   flutter_screenutil:
+  data_table_2:
   auto_route:
+
+  isar:
+  isar_flutter_libs:
+  path_provider:
   flutter: 
     sdk: flutter
 
@@ -19,8 +24,11 @@ dev_dependencies:
   flutter_test: 
     sdk: flutter
   auto_route_generator:
+  isar_generator:
   build_runner:
 
 flutter: 
   uses-material-design: true
+  assets:
+    - assets/
 

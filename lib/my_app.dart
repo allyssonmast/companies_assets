@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'app/auto_router/routes_imports.dart';
+import 'app/routes/app_pages.dart';
+import 'app/utils/customer_route.dart';
+import 'app/utils/navigation_provider.dart';
 import 'app/utils/theme.dart';
 import 'app/utils/translation.dart';
 
@@ -15,7 +18,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final appRouter = AppRouter();
+  final NavigationService _navigationService = NavigationService();
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -24,23 +27,25 @@ class _MyAppState extends State<MyApp> {
       useInheritedMediaQuery: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return GetMaterialApp.router(
-          title: "Companies Assets",
-          routeInformationParser: appRouter.defaultRouteParser(),
-          routerDelegate: appRouter.delegate(),
-          initialBinding: HomeBinding(),
-          debugShowCheckedModeBanner: false,
-          themeMode: ThemeMode.system,
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          translations: TranslationService(),
-          locale: TranslationService.locale,
-          fallbackLocale: TranslationService.fallbackLocale,
-          supportedLocales: const [
-            TranslationService.locale,
-            TranslationService.fallbackLocale,
-            Locale('pt', 'BR'),
-          ],
+        return NavigationProvider(
+          navigationService: _navigationService,
+          child: GetMaterialApp(
+            title: "Companies Assets",
+            initialRoute: Routes.HOME,
+            getPages: AppPages.routes,
+            debugShowCheckedModeBanner: false,
+            themeMode: ThemeMode.system,
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            translations: TranslationService(),
+            locale: TranslationService.locale,
+            fallbackLocale: TranslationService.fallbackLocale,
+            supportedLocales: const [
+              TranslationService.locale,
+              TranslationService.fallbackLocale,
+              Locale('pt', 'BR'),
+            ],
+          ),
         );
       },
     );
