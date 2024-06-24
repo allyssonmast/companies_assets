@@ -1,61 +1,55 @@
 import 'package:injectable/injectable.dart';
 import '../../modules/assets/models/tree_node.dart';
 
-
 @injectable
 class TreeDataConvert {
+  List<NodeTree> buildTree(
+      List<Map<String, dynamic>> locations, List<Map<String, dynamic>> assets) {
 
-  List<NodeTree> buildTree(List<dynamic> locations, List<dynamic> assets) {
-    final Map<String, dynamic> locationsMap = {for (var loc in locations) loc['id']: loc};
+    final Map<String, List<Map<String, dynamic>>> locationAssetsMap = {};
+    final Map<String, List<Map<String, dynamic>>> parentAssetsMap = {};
 
-    final Map<String, List<dynamic>> locationAssetsMap = {};
-    final Map<String, List<dynamic>> parentAssetsMap = {};
+    void addToMap(Map<String, List<Map<String, dynamic>>> map, String key,
+        Map<String, dynamic> value) {
+      map.putIfAbsent(key, () => []).add(value);
+    }
 
     for (var asset in assets) {
       final locationId = asset['locationId'];
       final parentId = asset['parentId'];
 
       if (locationId != null) {
-        if (!locationAssetsMap.containsKey(locationId)) {
-          locationAssetsMap[locationId] = [];
-        }
-        locationAssetsMap[locationId]!.add(asset);
+        addToMap(locationAssetsMap, locationId, asset);
       } else if (parentId != null) {
-        if (!parentAssetsMap.containsKey(parentId)) {
-          parentAssetsMap[parentId] = [];
-        }
-        parentAssetsMap[parentId]!.add(asset);
+        addToMap(parentAssetsMap, parentId, asset);
       }
     }
 
     List<NodeTree> buildNodes(String? parentId) {
-      final List<NodeTree> nodes = [];
-      for (var loc in locations.where((loc) => loc['parentId'] == parentId)) {
-        final List<NodeTree> children = buildNodes(loc['id']);
-        if (locationAssetsMap.containsKey(loc['id'])) {
-          for (var asset in locationAssetsMap[loc['id']]!) {
-            children.add(_buildAssetNode(asset, parentAssetsMap));
-          }
-        }
-        nodes.add(NodeTree(
+      return locations.where((loc) => loc['parentId'] == parentId).map((loc) {
+        final children = buildNodes(loc['id'])
+          ..addAll(locationAssetsMap[loc['id']]
+                  ?.map((asset) => _buildAssetNode(asset, parentAssetsMap)) ??
+              []);
+        return NodeTree(
           label: loc['name'],
           key: loc['id'],
+          sensorType: loc['sensorType'],
+          status: loc['status'],
           children: children,
-        ));
-      }
-      return nodes;
+        );
+      }).toList();
     }
 
     return buildNodes(null);
   }
 
-  NodeTree _buildAssetNode(dynamic asset, Map<String, List<dynamic>> parentAssetsMap) {
-    final List<NodeTree> children = [];
-    if (parentAssetsMap.containsKey(asset['id'])) {
-      for (var subAsset in parentAssetsMap[asset['id']]!) {
-        children.add(_buildAssetNode(subAsset, parentAssetsMap));
-      }
-    }
+  NodeTree _buildAssetNode(Map<String, dynamic> asset,
+      Map<String, List<Map<String, dynamic>>> parentAssetsMap) {
+    final children = parentAssetsMap[asset['id']]
+            ?.map((subAsset) => _buildAssetNode(subAsset, parentAssetsMap))
+            .toList() ??
+        [];
     return NodeTree(
       label: asset['name'],
       key: asset['id'],

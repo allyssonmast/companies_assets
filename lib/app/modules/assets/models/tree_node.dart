@@ -1,3 +1,4 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -6,6 +7,7 @@ import 'icon_data_convert.dart';
 
 part 'tree_node.g.dart';
 
+@CopyWith()
 @JsonSerializable(explicitToJson: true)
 class NodeTree {
   final String key;

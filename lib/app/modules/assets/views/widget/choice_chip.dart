@@ -1,20 +1,22 @@
-import 'package:companies_assets/app/modules/assets/views/widget/choise_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'choise_widget.dart';
+
 class ChoiceChipDemo extends StatelessWidget {
   final int selectedChoice;
-  final ValueChanged<int> onSelected;
+  final Function(int) onSelected;
+
   const ChoiceChipDemo(
       {super.key, required this.selectedChoice, required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
-    var list = ['Todos', 'Sensor de Energia', 'Crítico'];
+    var list = ['All', 'Energy Sensors', 'Critical Status'];
     var listIcons = [
-      Icons.web_asset,
+      Icons.all_inclusive,
       Icons.electric_bolt_outlined,
-      Icons.info_outline
+      Icons.warning_amber_rounded
     ];
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -31,9 +33,7 @@ class ChoiceChipDemo extends StatelessWidget {
             ),
             selected: selectedChoice == index,
             onSelected: (bool selected) {
-              if (selected) {
-                onSelected(index);
-              }
+              onSelected(selected ? index : 0);
             },
           );
         }),

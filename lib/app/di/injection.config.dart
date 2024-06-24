@@ -34,10 +34,7 @@ extension GetItInjectableX on _i1.GetIt {
       preResolve: true,
     );
     gh.factory<_i4.TreeDataConvert>(() => _i4.TreeDataConvert());
-    gh.factory<_i5.Repository>(() => _i5.Repository(
-          gh<_i3.Isar>(),
-          gh<_i4.TreeDataConvert>(),
-        ));
+    gh.factory<_i5.Repository>(() => _i5.Repository(gh<_i4.TreeDataConvert>()));
     gh.factory<_i6.AssetsController>(
         () => _i6.AssetsController(gh<_i5.Repository>()));
     return this;

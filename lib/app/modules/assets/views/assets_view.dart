@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/assets_controller.dart';
-import '../models/tree_node.dart';
 import 'widget/tree_node_adapter.dart';
 
 @RoutePage()
@@ -27,7 +26,7 @@ class AssetsView extends GetView<AssetsController> {
                 children: [
                   CustomerSearchBar(
                     controller: controller.searchController,
-                    onChanged: (query) {},
+                    onSubmitted: controller.onSearchChanged,
                   ),
                   ChoiceChipDemo(
                     selectedChoice: controller.selectedChoice.value,
@@ -37,25 +36,21 @@ class AssetsView extends GetView<AssetsController> {
               ),
             ),
           )),
-      body: FutureBuilder<List<NodeTree>>(
-        future: controller.loadTreeNodes(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No data available'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (_, index) {
-                return TreeNodeWidget(node: snapshot.data![index]);
-              },
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return ListView.builder(
+          itemCount: controller.treeNodes.length,
+          itemBuilder: (_, index) {
+            return TreeNodeWidget(
+              node: controller.treeNodes[index],
             );
-          }
-        },
-      ),
+          },
+        );
+      }),
     );
   }
 }
