@@ -17,29 +17,34 @@ const AssetSchema = CollectionSchema(
   name: r'Asset',
   id: -2933289051367723566,
   properties: {
-    r'locationId': PropertySchema(
+    r'id': PropertySchema(
       id: 0,
+      name: r'id',
+      type: IsarType.string,
+    ),
+    r'locationId': PropertySchema(
+      id: 1,
       name: r'locationId',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'parentId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'parentId',
       type: IsarType.string,
     ),
     r'sensorType': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'sensorType',
       type: IsarType.string,
       enumMap: _AssetsensorTypeEnumValueMap,
     ),
     r'status': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'status',
       type: IsarType.string,
       enumMap: _AssetstatusEnumValueMap,
@@ -49,7 +54,7 @@ const AssetSchema = CollectionSchema(
   serialize: _assetSerialize,
   deserialize: _assetDeserialize,
   deserializeProp: _assetDeserializeProp,
-  idName: r'id',
+  idName: r'idUser',
   indexes: {},
   links: {
     r'location': LinkSchema(
@@ -85,6 +90,7 @@ int _assetEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.id.length * 3;
   {
     final value = object.locationId;
     if (value != null) {
@@ -104,7 +110,12 @@ int _assetEstimateSize(
       bytesCount += 3 + value.name.length * 3;
     }
   }
-  bytesCount += 3 + object.status.name.length * 3;
+  {
+    final value = object.status;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -114,11 +125,12 @@ void _assetSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.locationId);
-  writer.writeString(offsets[1], object.name);
-  writer.writeString(offsets[2], object.parentId);
-  writer.writeString(offsets[3], object.sensorType?.name);
-  writer.writeString(offsets[4], object.status.name);
+  writer.writeString(offsets[0], object.id);
+  writer.writeString(offsets[1], object.locationId);
+  writer.writeString(offsets[2], object.name);
+  writer.writeString(offsets[3], object.parentId);
+  writer.writeString(offsets[4], object.sensorType?.name);
+  writer.writeString(offsets[5], object.status?.name);
 }
 
 Asset _assetDeserialize(
@@ -128,15 +140,14 @@ Asset _assetDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Asset();
-  object.id = id;
-  object.locationId = reader.readStringOrNull(offsets[0]);
-  object.name = reader.readString(offsets[1]);
-  object.parentId = reader.readStringOrNull(offsets[2]);
+  object.id = reader.readString(offsets[0]);
+  object.idUser = id;
+  object.locationId = reader.readStringOrNull(offsets[1]);
+  object.name = reader.readString(offsets[2]);
+  object.parentId = reader.readStringOrNull(offsets[3]);
   object.sensorType =
-      _AssetsensorTypeValueEnumMap[reader.readStringOrNull(offsets[3])];
-  object.status =
-      _AssetstatusValueEnumMap[reader.readStringOrNull(offsets[4])] ??
-          Status.operating;
+      _AssetsensorTypeValueEnumMap[reader.readStringOrNull(offsets[4])];
+  object.status = _AssetstatusValueEnumMap[reader.readStringOrNull(offsets[5])];
   return object;
 }
 
@@ -148,17 +159,18 @@ P _assetDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
-    case 1:
       return (reader.readString(offset)) as P;
-    case 2:
+    case 1:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readString(offset)) as P;
     case 3:
+      return (reader.readStringOrNull(offset)) as P;
+    case 4:
       return (_AssetsensorTypeValueEnumMap[reader.readStringOrNull(offset)])
           as P;
-    case 4:
-      return (_AssetstatusValueEnumMap[reader.readStringOrNull(offset)] ??
-          Status.operating) as P;
+    case 5:
+      return (_AssetstatusValueEnumMap[reader.readStringOrNull(offset)]) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -182,7 +194,7 @@ const _AssetstatusValueEnumMap = {
 };
 
 Id _assetGetId(Asset object) {
-  return object.id;
+  return object.idUser ?? Isar.autoIncrement;
 }
 
 List<IsarLinkBase<dynamic>> _assetGetLinks(Asset object) {
@@ -190,7 +202,7 @@ List<IsarLinkBase<dynamic>> _assetGetLinks(Asset object) {
 }
 
 void _assetAttach(IsarCollection<dynamic> col, Id id, Asset object) {
-  object.id = id;
+  object.idUser = id;
   object.location.attach(col, col.isar.collection<Location>(), r'location', id);
   object.parent.attach(col, col.isar.collection<Asset>(), r'parent', id);
   object.childAssets
@@ -198,7 +210,7 @@ void _assetAttach(IsarCollection<dynamic> col, Id id, Asset object) {
 }
 
 extension AssetQueryWhereSort on QueryBuilder<Asset, Asset, QWhere> {
-  QueryBuilder<Asset, Asset, QAfterWhere> anyId() {
+  QueryBuilder<Asset, Asset, QAfterWhere> anyIdUser() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
@@ -206,66 +218,66 @@ extension AssetQueryWhereSort on QueryBuilder<Asset, Asset, QWhere> {
 }
 
 extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idEqualTo(Id id) {
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idUserEqualTo(Id idUser) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
+        lower: idUser,
+        upper: idUser,
       ));
     });
   }
 
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idUserNotEqualTo(Id idUser) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
+              IdWhereClause.lessThan(upper: idUser, includeUpper: false),
             )
             .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
+              IdWhereClause.greaterThan(lower: idUser, includeLower: false),
             );
       } else {
         return query
             .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
+              IdWhereClause.greaterThan(lower: idUser, includeLower: false),
             )
             .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
+              IdWhereClause.lessThan(upper: idUser, includeUpper: false),
             );
       }
     });
   }
 
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idUserGreaterThan(Id idUser,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
+        IdWhereClause.greaterThan(lower: idUser, includeLower: include),
       );
     });
   }
 
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idUserLessThan(Id idUser,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
+        IdWhereClause.lessThan(upper: idUser, includeUpper: include),
       );
     });
   }
 
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idUserBetween(
+    Id lowerIdUser,
+    Id upperIdUser, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
+        lower: lowerIdUser,
         includeLower: includeLower,
-        upper: upperId,
+        upper: upperIdUser,
         includeUpper: includeUpper,
       ));
     });
@@ -273,50 +285,194 @@ extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
 }
 
 extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
-  QueryBuilder<Asset, Asset, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> idGreaterThan(
-    Id value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'id',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> idLessThan(
-    Id value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'id',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idMatches(String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'id',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'id',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idUserIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'idUser',
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idUserIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'idUser',
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idUserEqualTo(Id? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'idUser',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idUserGreaterThan(
+    Id? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'idUser',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idUserLessThan(
+    Id? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'idUser',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> idUserBetween(
+    Id? lower,
+    Id? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
+        property: r'idUser',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -891,8 +1047,24 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> statusIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'status',
+      ));
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterFilterCondition> statusIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'status',
+      ));
+    });
+  }
+
   QueryBuilder<Asset, Asset, QAfterFilterCondition> statusEqualTo(
-    Status value, {
+    Status? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -905,7 +1077,7 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> statusGreaterThan(
-    Status value, {
+    Status? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -920,7 +1092,7 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> statusLessThan(
-    Status value, {
+    Status? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -935,8 +1107,8 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> statusBetween(
-    Status lower,
-    Status upper, {
+    Status? lower,
+    Status? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1109,6 +1281,18 @@ extension AssetQueryLinks on QueryBuilder<Asset, Asset, QFilterCondition> {
 }
 
 extension AssetQuerySortBy on QueryBuilder<Asset, Asset, QSortBy> {
+  QueryBuilder<Asset, Asset, QAfterSortBy> sortById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterSortBy> sortByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
   QueryBuilder<Asset, Asset, QAfterSortBy> sortByLocationId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'locationId', Sort.asc);
@@ -1183,6 +1367,18 @@ extension AssetQuerySortThenBy on QueryBuilder<Asset, Asset, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Asset, Asset, QAfterSortBy> thenByIdUser() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'idUser', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Asset, Asset, QAfterSortBy> thenByIdUserDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'idUser', Sort.desc);
+    });
+  }
+
   QueryBuilder<Asset, Asset, QAfterSortBy> thenByLocationId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'locationId', Sort.asc);
@@ -1245,6 +1441,13 @@ extension AssetQuerySortThenBy on QueryBuilder<Asset, Asset, QSortThenBy> {
 }
 
 extension AssetQueryWhereDistinct on QueryBuilder<Asset, Asset, QDistinct> {
+  QueryBuilder<Asset, Asset, QDistinct> distinctById(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'id', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Asset, Asset, QDistinct> distinctByLocationId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1282,7 +1485,13 @@ extension AssetQueryWhereDistinct on QueryBuilder<Asset, Asset, QDistinct> {
 }
 
 extension AssetQueryProperty on QueryBuilder<Asset, Asset, QQueryProperty> {
-  QueryBuilder<Asset, int, QQueryOperations> idProperty() {
+  QueryBuilder<Asset, int, QQueryOperations> idUserProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'idUser');
+    });
+  }
+
+  QueryBuilder<Asset, String, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
@@ -1312,9 +1521,42 @@ extension AssetQueryProperty on QueryBuilder<Asset, Asset, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Asset, Status, QQueryOperations> statusProperty() {
+  QueryBuilder<Asset, Status?, QQueryOperations> statusProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'status');
     });
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Asset _$AssetFromJson(Map<String, dynamic> json) => Asset()
+  ..idUser = (json['idUser'] as num?)?.toInt()
+  ..id = json['id'] as String
+  ..name = json['name'] as String
+  ..sensorType = $enumDecodeNullable(_$SensorTypeEnumMap, json['sensorType'])
+  ..status = $enumDecodeNullable(_$StatusEnumMap, json['status'])
+  ..locationId = json['locationId'] as String?
+  ..parentId = json['parentId'] as String?;
+
+Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
+      'idUser': instance.idUser,
+      'id': instance.id,
+      'name': instance.name,
+      'sensorType': _$SensorTypeEnumMap[instance.sensorType],
+      'status': _$StatusEnumMap[instance.status],
+      'locationId': instance.locationId,
+      'parentId': instance.parentId,
+    };
+
+const _$SensorTypeEnumMap = {
+  SensorType.energy: 'energy',
+  SensorType.vibration: 'vibration',
+};
+
+const _$StatusEnumMap = {
+  Status.operating: 'operating',
+  Status.alert: 'alert',
+};

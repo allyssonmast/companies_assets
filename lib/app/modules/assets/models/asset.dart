@@ -1,14 +1,19 @@
 import 'package:isar/isar.dart';
 import 'location.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'asset.g.dart';
 
 enum SensorType { energy, vibration }
 enum Status { operating, alert }
 
+@JsonSerializable()
 @collection
 class Asset {
-  Id id = Isar.autoIncrement;
+
+  Id? idUser = Isar.autoIncrement;
+
+  late String id;
 
   late String name;
 
@@ -16,7 +21,7 @@ class Asset {
   SensorType? sensorType;
 
   @Enumerated(EnumType.name)
-  late Status status;
+  Status? status;
 
   String? locationId;
   String? parentId;
@@ -26,4 +31,11 @@ class Asset {
 
   @Backlink(to: 'parent')
   final childAssets = IsarLinks<Asset>();
+
+  Asset();
+  factory Asset.fromJson(Map<String, dynamic> json) =>
+      _$AssetFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AssetToJson(this);
+
 }

@@ -1,8 +1,10 @@
 import 'package:companies_assets/my_app.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 
-void main() async{
+import 'app/di/injection.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await configureDependencies();
   runApp(const MyApp());
 }

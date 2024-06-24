@@ -1,4 +1,4 @@
-import '../auto_router/routes_imports.dart';
+import '../../auto_router/routes_imports.dart';
 
 class NavigationService {
   final AppRouter _appRouter = AppRouter();

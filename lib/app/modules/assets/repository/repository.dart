@@ -1,69 +1,30 @@
+import 'package:injectable/injectable.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+import '../../../utils/json_converts/TreeDataService.dart';
 import '../models/asset.dart';
 import '../models/location.dart';
+import '../models/tree_node.dart';
 
+@injectable
 class Repository {
-  late Isar _isar;
+  final Isar _isar;
+  final TreeDataConvert convert;
 
-  Repository() {
-    _initIsar();
-  }
+  Repository(this._isar, this.convert);
 
-  Future<void> _initIsar() async {
-    final dir = await getApplicationDocumentsDirectory();
-    _isar = await Isar.open(
-      [AssetSchema, LocationSchema],
-      directory: dir.path,
-    );
-  }
-
-  Future<void> loadCompanyData(String companyName) async {
-    final assetsJson =
-    await rootBundle.loadString('assets/${companyName}_assets.json');
+  Future<List<NodeTree>> getData(String companyName) async {
     final locationsJson =
-    await rootBundle.loadString('assets/${companyName}_locations.json');
+        await rootBundle.loadString('assets/${companyName}_locations.json');
+    final assetsJson =
+        await rootBundle.loadString('assets/${companyName}_assets.json');
 
-    List assets = jsonDecode(assetsJson);
-    List locations = jsonDecode(locationsJson);
+    final List<dynamic> locations = json.decode(locationsJson);
+    final List<dynamic> assets = json.decode(assetsJson);
 
-    await _isar.writeTxn(() async {
-      for (var location in locations) {
-        var existingLocation = await _isar.locations
-            .where()
-            .filter()
-            .idEqualTo(location['id'])
-            .findFirst();
-        if (existingLocation == null) {
-          await _isar.locations.put(Location()
-            ..id = location['id']
-            ..name = location['name']
-            ..parentId = location['parentId']);
-        }
-      }
-
-      for (var asset in assets) {
-        var existingAsset = await _isar.assets
-            .where()
-            .filter()
-            .idEqualTo(asset['id'])
-            .findFirst();
-        if (existingAsset == null) {
-          await _isar.assets.put(Asset()
-            ..id = asset['id']
-            ..name = asset['name']
-            ..locationId = asset['locationId']
-            ..parentId = asset['parentId']
-            ..sensorType = asset['sensorType'] != null
-                ? SensorType.values.byName(asset['sensorType'])
-                : null
-            ..status = Status.values.byName(asset['status']));
-        }
-      }
-    });
+    return convert.buildTree(locations, assets);
   }
 
   Future<List<Asset>> fetchAssets() async {
@@ -84,5 +45,42 @@ class Repository {
     await _isar.writeTxn(() async {
       await _isar.locations.put(newLocation);
     });
+  }
+
+  Future<void> importAssetsFromJson() async {
+    final assetFiles = [
+      'assets/apex_assets.json',
+      'assets/jaguar_assets.json',
+      'assets/tobias_assets.json',
+    ];
+
+    for (final file in assetFiles) {
+      final jsonString = await rootBundle.loadString(file);
+      final List<dynamic> jsonData = json.decode(jsonString);
+      final assets = jsonData.map((data) => Asset.fromJson(data)).toList();
+
+      await _isar.writeTxn(() async {
+        await _isar.assets.putAll(assets);
+      });
+    }
+  }
+
+  Future<void> importLocationsFromJson() async {
+    final locationFiles = [
+      'assets/apex_locations.json',
+      'assets/jaguar_locations.json',
+      'assets/tobias_locations.json',
+    ];
+
+    for (final file in locationFiles) {
+      final jsonString = await rootBundle.loadString(file);
+      final List<dynamic> jsonData = json.decode(jsonString);
+      final locations =
+          jsonData.map((data) => Location.fromJson(data)).toList();
+
+      await _isar.writeTxn(() async {
+        await _isar.locations.putAll(locations);
+      });
+    }
   }
 }

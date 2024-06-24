@@ -1,14 +1,12 @@
-import 'package:companies_assets/app/modules/home/bindings/home_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'app/auto_router/routes_imports.dart';
 import 'app/routes/app_pages.dart';
-import 'app/utils/customer_route.dart';
-import 'app/utils/navigation_provider.dart';
-import 'app/utils/theme.dart';
-import 'app/utils/translation.dart';
+import 'app/utils/navigation/customer_route.dart';
+import 'app/utils/navigation/navigation_provider.dart';
+import 'app/utils/theme/theme.dart';
+import 'app/utils/translation/translation.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

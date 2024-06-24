@@ -10,12 +10,14 @@ dependencies:
   get: 4.6.6
   google_fonts:
   flutter_screenutil:
-  data_table_2:
   auto_route:
-
+  flutter_treeview: ^1.0.7+1
   isar:
   isar_flutter_libs:
+  json_annotation:
   path_provider:
+  get_it:
+  injectable:
   flutter: 
     sdk: flutter
 
@@ -24,6 +26,8 @@ dev_dependencies:
   flutter_test: 
     sdk: flutter
   auto_route_generator:
+  injectable_generator:
+  json_serializable:
   isar_generator:
   build_runner:
 

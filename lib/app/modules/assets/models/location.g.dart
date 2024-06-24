@@ -17,13 +17,18 @@ const LocationSchema = CollectionSchema(
   name: r'Location',
   id: -8833727672639471650,
   properties: {
-    r'name': PropertySchema(
+    r'id': PropertySchema(
       id: 0,
+      name: r'id',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 1,
       name: r'name',
       type: IsarType.string,
     ),
     r'parentId': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'parentId',
       type: IsarType.string,
     )
@@ -32,7 +37,7 @@ const LocationSchema = CollectionSchema(
   serialize: _locationSerialize,
   deserialize: _locationDeserialize,
   deserializeProp: _locationDeserializeProp,
-  idName: r'id',
+  idName: r'idLocation',
   indexes: {},
   links: {
     r'parentLocation': LinkSchema(
@@ -62,6 +67,7 @@ int _locationEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.id.length * 3;
   bytesCount += 3 + object.name.length * 3;
   {
     final value = object.parentId;
@@ -78,8 +84,9 @@ void _locationSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.name);
-  writer.writeString(offsets[1], object.parentId);
+  writer.writeString(offsets[0], object.id);
+  writer.writeString(offsets[1], object.name);
+  writer.writeString(offsets[2], object.parentId);
 }
 
 Location _locationDeserialize(
@@ -89,9 +96,10 @@ Location _locationDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Location();
-  object.id = id;
-  object.name = reader.readString(offsets[0]);
-  object.parentId = reader.readStringOrNull(offsets[1]);
+  object.id = reader.readString(offsets[0]);
+  object.idLocation = id;
+  object.name = reader.readString(offsets[1]);
+  object.parentId = reader.readStringOrNull(offsets[2]);
   return object;
 }
 
@@ -105,6 +113,8 @@ P _locationDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -112,7 +122,7 @@ P _locationDeserializeProp<P>(
 }
 
 Id _locationGetId(Location object) {
-  return object.id;
+  return object.idLocation ?? Isar.autoIncrement;
 }
 
 List<IsarLinkBase<dynamic>> _locationGetLinks(Location object) {
@@ -120,7 +130,7 @@ List<IsarLinkBase<dynamic>> _locationGetLinks(Location object) {
 }
 
 void _locationAttach(IsarCollection<dynamic> col, Id id, Location object) {
-  object.id = id;
+  object.idLocation = id;
   object.parentLocation
       .attach(col, col.isar.collection<Location>(), r'parentLocation', id);
   object.subLocations
@@ -128,7 +138,7 @@ void _locationAttach(IsarCollection<dynamic> col, Id id, Location object) {
 }
 
 extension LocationQueryWhereSort on QueryBuilder<Location, Location, QWhere> {
-  QueryBuilder<Location, Location, QAfterWhere> anyId() {
+  QueryBuilder<Location, Location, QAfterWhere> anyIdLocation() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
@@ -136,66 +146,70 @@ extension LocationQueryWhereSort on QueryBuilder<Location, Location, QWhere> {
 }
 
 extension LocationQueryWhere on QueryBuilder<Location, Location, QWhereClause> {
-  QueryBuilder<Location, Location, QAfterWhereClause> idEqualTo(Id id) {
+  QueryBuilder<Location, Location, QAfterWhereClause> idLocationEqualTo(
+      Id idLocation) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
+        lower: idLocation,
+        upper: idLocation,
       ));
     });
   }
 
-  QueryBuilder<Location, Location, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<Location, Location, QAfterWhereClause> idLocationNotEqualTo(
+      Id idLocation) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
+              IdWhereClause.lessThan(upper: idLocation, includeUpper: false),
             )
             .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
+              IdWhereClause.greaterThan(lower: idLocation, includeLower: false),
             );
       } else {
         return query
             .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
+              IdWhereClause.greaterThan(lower: idLocation, includeLower: false),
             )
             .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
+              IdWhereClause.lessThan(upper: idLocation, includeUpper: false),
             );
       }
     });
   }
 
-  QueryBuilder<Location, Location, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<Location, Location, QAfterWhereClause> idLocationGreaterThan(
+      Id idLocation,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
+        IdWhereClause.greaterThan(lower: idLocation, includeLower: include),
       );
     });
   }
 
-  QueryBuilder<Location, Location, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<Location, Location, QAfterWhereClause> idLocationLessThan(
+      Id idLocation,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
+        IdWhereClause.lessThan(upper: idLocation, includeUpper: include),
       );
     });
   }
 
-  QueryBuilder<Location, Location, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
+  QueryBuilder<Location, Location, QAfterWhereClause> idLocationBetween(
+    Id lowerIdLocation,
+    Id upperIdLocation, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
+        lower: lowerIdLocation,
         includeLower: includeLower,
-        upper: upperId,
+        upper: upperIdLocation,
         includeUpper: includeUpper,
       ));
     });
@@ -204,50 +218,198 @@ extension LocationQueryWhere on QueryBuilder<Location, Location, QWhereClause> {
 
 extension LocationQueryFilter
     on QueryBuilder<Location, Location, QFilterCondition> {
-  QueryBuilder<Location, Location, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<Location, Location, QAfterFilterCondition> idEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Location, Location, QAfterFilterCondition> idGreaterThan(
-    Id value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'id',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Location, Location, QAfterFilterCondition> idLessThan(
-    Id value, {
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'id',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Location, Location, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'id',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'id',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idLocationIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'idLocation',
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition>
+      idLocationIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'idLocation',
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idLocationEqualTo(
+      Id? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'idLocation',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idLocationGreaterThan(
+    Id? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'idLocation',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idLocationLessThan(
+    Id? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'idLocation',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterFilterCondition> idLocationBetween(
+    Id? lower,
+    Id? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
+        property: r'idLocation',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -615,6 +777,18 @@ extension LocationQueryLinks
 }
 
 extension LocationQuerySortBy on QueryBuilder<Location, Location, QSortBy> {
+  QueryBuilder<Location, Location, QAfterSortBy> sortById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterSortBy> sortByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
   QueryBuilder<Location, Location, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -654,6 +828,18 @@ extension LocationQuerySortThenBy
     });
   }
 
+  QueryBuilder<Location, Location, QAfterSortBy> thenByIdLocation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'idLocation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Location, Location, QAfterSortBy> thenByIdLocationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'idLocation', Sort.desc);
+    });
+  }
+
   QueryBuilder<Location, Location, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -681,6 +867,13 @@ extension LocationQuerySortThenBy
 
 extension LocationQueryWhereDistinct
     on QueryBuilder<Location, Location, QDistinct> {
+  QueryBuilder<Location, Location, QDistinct> distinctById(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'id', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Location, Location, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -698,7 +891,13 @@ extension LocationQueryWhereDistinct
 
 extension LocationQueryProperty
     on QueryBuilder<Location, Location, QQueryProperty> {
-  QueryBuilder<Location, int, QQueryOperations> idProperty() {
+  QueryBuilder<Location, int, QQueryOperations> idLocationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'idLocation');
+    });
+  }
+
+  QueryBuilder<Location, String, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
@@ -716,3 +915,20 @@ extension LocationQueryProperty
     });
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Location _$LocationFromJson(Map<String, dynamic> json) => Location()
+  ..idLocation = (json['idLocation'] as num?)?.toInt()
+  ..id = json['id'] as String
+  ..name = json['name'] as String
+  ..parentId = json['parentId'] as String?;
+
+Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+      'idLocation': instance.idLocation,
+      'id': instance.id,
+      'name': instance.name,
+      'parentId': instance.parentId,
+    };
