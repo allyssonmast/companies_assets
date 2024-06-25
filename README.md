@@ -20,9 +20,9 @@ Companies Assets App is a Flutter application designed to manage and visualize c
 
 Here is a demo video showcasing the main features of the Companies Assets App:
 
-![Demo Video](assets/demo_video.mp4)
+![Demo Video](assets/demo_video.gif)
 
-If the video does not play, [click here to view it](assets/demo_video.mp4).
+If the video does not play, [click here to view it](assets/demo_video.gif).
 
 ## Getting Started
 
@@ -135,7 +135,6 @@ Custom JSON converters for serializing and deserializing complex data types like
 The app supports multiple languages. Language files are located in the `assets` directory:
 
 - `en_US.json` - English
-- `de_DE.json` - German
 - `pt_BR.json` - Portuguese
 
 Add new translations by creating additional JSON files and updating the language switch logic in `DrawerWidget`.
@@ -174,5 +173,3 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 For questions or suggestions, please open an issue or contact the repository owner.
 
 ---
-
-This documentation should help you understand the structure and functionality of the Companies Assets App. If you have any questions or need further assistance, feel free to reach out. Happy coding!
