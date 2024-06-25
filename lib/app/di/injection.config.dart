@@ -14,7 +14,7 @@ import 'package:injectable/injectable.dart' as _i2;
 import '../modules/assets/controllers/assets_controller.dart' as _i6;
 import '../modules/assets/repository/repository.dart' as _i5;
 import '../utils/filter_nodes.dart' as _i3;
-import '../utils/json_converts/TreeDataService.dart' as _i4;
+import '../utils/json_converts/tree_data_service.dart' as _i4;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt

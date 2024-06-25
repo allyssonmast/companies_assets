@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-import '../../../utils/json_converts/TreeDataService.dart';
+import '../../../utils/json_converts/tree_data_service.dart';
 import '../models/tree_node.dart';
 import 'package:dartz/dartz.dart';
 
