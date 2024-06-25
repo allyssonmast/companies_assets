@@ -12,17 +12,12 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     var list = ['Jaguar', 'Tobias', 'Apex'];
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tractian'),
-        centerTitle: true,
-      ),
-      body: ListView.builder(
-          itemCount: list.length,
-          padding: const EdgeInsets.all(8),
-          itemBuilder: (_, index) {
-            return CompanyCard(title: list[index]);
-          }),
+    return ListView.builder(
+      itemCount: list.length,
+      padding: const EdgeInsets.all(8),
+      itemBuilder: (_, index) {
+        return CompanyCard(title: list[index]);
+      },
     );
   }
 }

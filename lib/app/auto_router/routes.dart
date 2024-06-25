@@ -8,8 +8,23 @@ class AppRouter extends $AppRouter {
   List<AutoRoute> get routes => [
         AutoRoute(
           initial: true,
-          page: HomeViewRoute.page,
-          path: HOME,
+          page: DashboardPageRoute.page,
+          path: DASHBOARD,
+          children: [
+            AutoRoute(
+              page: HomeViewRoute.page,
+              initial: true,
+              path: HOME,
+            ),
+            AutoRoute(
+              page: NewAsssetViewRoute.page,
+              path: NEWASSET,
+            ),
+            AutoRoute(
+              page: ConfigViewRoute.page,
+              path: CONFIG,
+            ),
+          ],
         ),
         AutoRoute(
           page: AssetsViewRoute.page,

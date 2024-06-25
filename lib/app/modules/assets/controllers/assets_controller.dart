@@ -2,32 +2,47 @@ import 'package:companies_assets/app/modules/assets/repository/repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import '../../../utils/filter_nodes.dart';
 import '../models/tree_node.dart';
 
 @injectable
 class AssetsController extends GetxController {
   final Repository _repository;
-  final String value = Get.arguments;
+  final FilterNodes filterNodes;
+  final RxString errorMessage = ''.obs;
+  //var companyId = Get.arguments;
+  var companyId = ''.obs;
   final RxBool isLoading = false.obs;
   final RxInt selectedChoice = 0.obs;
   var searchController = TextEditingController();
   final RxList<NodeTree> treeNodes = <NodeTree>[].obs;
   List<NodeTree> originalTreeNodes = [];
 
-  AssetsController(this._repository);
+  AssetsController(this._repository, this.filterNodes);
 
   @override
   void onInit() {
     super.onInit();
-    loadTreeNodes();
+    loadTreeNodes(companyId.value);
   }
 
-  Future<void> loadTreeNodes() async {
+  void changeCompanyId(String company) => companyId.value = company;
+
+  Future<void> loadTreeNodes(String companyId) async {
     isLoading.value = true;
-    List<NodeTree> nodes = await _repository.getData(value.toLowerCase());
-    originalTreeNodes = List.from(nodes);
-    treeNodes.value = nodes;
+    final result = await _repository.getData(companyId.toLowerCase());
+    result.fold(
+      (l) {
+        errorMessage.value = "Erro: $l";
+        treeNodes.clear();
+      },
+      (r) {
+        originalTreeNodes = List.from(r);
+        treeNodes.value = r;
+      },
+    );
     isLoading.value = false;
+    update();
   }
 
   void onSelectedChoice(int index) {
@@ -41,8 +56,9 @@ class AssetsController extends GetxController {
 
   void applyFilters() {
     isLoading.value = true;
+    update();
     List<NodeTree> filteredNodes =
-        _filterNodes(originalTreeNodes, searchController.text, (node) {
+        filterNodes(originalTreeNodes, searchController.text, (node) {
       bool matchesChoice = true;
 
       if (selectedChoice.value == 1) {
@@ -56,25 +72,6 @@ class AssetsController extends GetxController {
 
     treeNodes.value = filteredNodes;
     isLoading.value = false;
-  }
-
-  List<NodeTree> _filterNodes(List<NodeTree> nodes, String query,
-      bool Function(NodeTree node) predicate) {
-    return nodes
-        .map((node) {
-          List<NodeTree> filteredChildren = node.children.isNotEmpty
-              ? _filterNodes(node.children, query, predicate)
-              : [];
-          bool matchesQuery =
-              node.label.toLowerCase().contains(query.toLowerCase());
-          bool matchesPredicate = predicate(node);
-          return (matchesQuery && matchesPredicate) ||
-                  filteredChildren.isNotEmpty
-              ? node.copyWith(children: filteredChildren)
-              : null;
-        })
-        .where((node) => node != null)
-        .toList()
-        .cast<NodeTree>();
+    update();
   }
 }

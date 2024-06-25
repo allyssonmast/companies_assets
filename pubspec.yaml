@@ -19,7 +19,8 @@ dependencies:
   get_it:
   injectable:
   copy_with_extension:
-  flutter: 
+  dartz:
+  flutter:
     sdk: flutter
 
 dev_dependencies: 

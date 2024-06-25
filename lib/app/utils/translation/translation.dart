@@ -8,8 +8,29 @@ class TranslationService extends Translations {
 
   @override
   Map<String, Map<String, String>> get keys => {
-        'en_US': {},
-        'de_DE': {},
-        'pt_BR': {},
+        'en_US': {
+          'darkmode':'Dark Mode',
+          'idioma':'language',
+          'empresas':'Companies',
+          'projetos':'Projects',
+          'config':'Settings',
+          'buscar':'Search for Assets or Location',
+          'todos':'All',
+          'sensores':'Energy Sensors',
+          'critico':'Critical Status',
+          'aplicacao':'Intuitive application with end-to-end support'
+        },
+        'pt_BR': {
+          'idioma':'Idioma',
+          'darkmode':'Modo Escuro',
+          'empresas' :'Empresas',
+          'projetos':'Projetos',
+          'config':'Configurações',
+          'buscar':'Buscar Ativos ou Local',
+          'todos':'Todos',
+          'sensores':'Sensores de Energia',
+          'critico':'Estado Crítico',
+          'aplicacao':'Aplicação intuitiva com suporte do começo ao fim'
+        },
       };
 }

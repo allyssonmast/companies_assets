@@ -18,8 +18,8 @@ class CustomerSearchBar extends StatelessWidget {
         onChanged: onChanged,
         onSubmitted: onSubmitted,
         decoration: InputDecoration(
-          hintText: 'Buscar Ativo ou Local',
-          hintStyle: TextStyle(color: Colors.white),
+          hintText: 'buscar'.tr,
+          hintStyle: const TextStyle(color: Colors.white),
           prefixIcon: const Icon(Icons.search,color: Colors.white,),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0.sp),

@@ -1,5 +1,5 @@
+import 'package:companies_assets/app/utils/navigation/navigation_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../auto_router/names_routes.dart';
 
@@ -14,7 +14,8 @@ class CompanyCard extends StatelessWidget {
       child: ListTile(
         minVerticalPadding: 34,
         onTap: () {
-          Get.toNamed(ASSETS, arguments: title);
+          // Get.toNamed(ASSETS, arguments: title);
+          context.navigator.navigateTo('$ASSETS/$title');
         },
         leading: const Icon(Icons.web_asset_sharp),
         title: Text('$title Unit'),

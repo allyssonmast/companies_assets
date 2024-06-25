@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '../../modules/assets/models/tree_node.dart';
 
@@ -36,6 +37,7 @@ class TreeDataConvert {
           key: loc['id'],
           sensorType: loc['sensorType'],
           status: loc['status'],
+          icon: Icons.location_on_outlined,
           children: children,
         );
       }).toList();
@@ -55,6 +57,7 @@ class TreeDataConvert {
       key: asset['id'],
       sensorType: asset['sensorType'],
       status: asset['status'],
+      icon: Icons.apps,
       children: children,
     );
   }

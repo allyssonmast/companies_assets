@@ -12,7 +12,7 @@ class ChoiceChipDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var list = ['All', 'Energy Sensors', 'Critical Status'];
+    var list = ['todos'.tr, 'sensores'.tr, 'critico'.tr];
     var listIcons = [
       Icons.all_inclusive,
       Icons.electric_bolt_outlined,
@@ -20,23 +20,28 @@ class ChoiceChipDemo extends StatelessWidget {
     ];
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
-      child: Wrap(
-        spacing: 8.0,
-        children: List<Widget>.generate(list.length, (int index) {
-          return ChoiceChip(
-            selectedColor: context.theme.primaryColor,
-            showCheckmark: false,
-            label: ChoiseWidget(
-              title: list[index],
-              iconData: listIcons[index],
-              isSelected: selectedChoice == index,
-            ),
-            selected: selectedChoice == index,
-            onSelected: (bool selected) {
-              onSelected(selected ? index : 0);
-            },
-          );
-        }),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List<Widget>.generate(list.length, (int index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: ChoiceChip(
+                selectedColor: context.theme.primaryColor,
+                showCheckmark: false,
+                label: ChoiseWidget(
+                  title: list[index],
+                  iconData: listIcons[index],
+                  isSelected: selectedChoice == index,
+                ),
+                selected: selectedChoice == index,
+                onSelected: (bool selected) {
+                  onSelected(selected ? index : 0);
+                },
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

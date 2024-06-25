@@ -15,5 +15,6 @@ var darkTheme = ThemeData(
   cardTheme: const CardTheme(clipBehavior: Clip.antiAlias),
   brightness: Brightness.dark,
   useMaterial3: true,
+  primaryColor: Colors.deepPurple,
   textTheme: GoogleFonts.latoTextTheme(),
 );

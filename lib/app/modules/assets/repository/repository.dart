@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import '../../../utils/json_converts/TreeDataService.dart';
 import '../models/tree_node.dart';
+import 'package:dartz/dartz.dart';
 
 @injectable
 class Repository {
@@ -10,7 +11,7 @@ class Repository {
 
   Repository(this.convert);
 
-  Future<List<NodeTree>> getData(String companyName) async {
+  Future<Either<String, List<NodeTree>>> getData(String companyName) async {
     try {
       final locationsJson =
           await rootBundle.loadString('assets/${companyName}_locations.json');
@@ -22,11 +23,9 @@ class Repository {
       final List<Map<String, dynamic>> assets =
           List<Map<String, dynamic>>.from(json.decode(assetsJson));
 
-      return convert.buildTree(locations, assets);
+      return Right(convert.buildTree(locations, assets));
     } catch (e) {
-      // Considerar adicionar um tratamento de erro mais específico
-      print('Erro ao carregar ou decodificar os dados: $e');
-      return [];
+      return Left(e.toString());
     }
   }
 }
