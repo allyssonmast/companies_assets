@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:companies_assets/app/modules/home/views/widget/company_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class HomeView extends GetView<HomeController> {
     var list = ['Jaguar', 'Tobias', 'Apex'];
     return ListView.builder(
       itemCount: list.length,
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(8.sp),
       itemBuilder: (_, index) {
         return CompanyCard(title: list[index]);
       },

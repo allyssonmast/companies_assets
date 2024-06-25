@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'choise_widget.dart';
@@ -19,13 +20,13 @@ class ChoiceChipDemo extends StatelessWidget {
       Icons.warning_amber_rounded
     ];
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.only(bottom: 8.0.sp),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: List<Widget>.generate(list.length, (int index) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              padding: EdgeInsets.symmetric(horizontal: 4.0.sp),
               child: ChoiceChip(
                 selectedColor: context.theme.primaryColor,
                 showCheckmark: false,

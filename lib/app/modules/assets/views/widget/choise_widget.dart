@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChoiseWidget extends StatelessWidget {
   final String title;
@@ -19,9 +20,7 @@ class ChoiseWidget extends StatelessWidget {
           iconData,
           color: isSelected ? Colors.white : null,
         ),
-        const SizedBox(
-          width: 4,
-        ),
+        SizedBox(width: 4.sp),
         Text(
           title,
           style: TextStyle(color: isSelected ? Colors.white : null),

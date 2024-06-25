@@ -3,6 +3,7 @@ import 'package:companies_assets/app/di/injection.dart';
 import 'package:companies_assets/app/modules/assets/views/widget/choice_chip.dart';
 import 'package:companies_assets/app/modules/assets/views/widget/search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controllers/assets_controller.dart';
 import 'widget/tree_node_adapter.dart';
@@ -29,7 +30,7 @@ class AssetsView extends StatelessWidget {
       centerTitle: true,
       elevation: 8,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
+        preferredSize: Size.fromHeight(120.sp),
         child: _buildAppBarBottom(controller),
       ),
     );

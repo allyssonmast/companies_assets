@@ -1,5 +1,6 @@
 import 'package:companies_assets/app/utils/navigation/navigation_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../auto_router/names_routes.dart';
 
@@ -10,9 +11,9 @@ class CompanyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(24),
+      margin: EdgeInsets.all(24.sp),
       child: ListTile(
-        minVerticalPadding: 34,
+        minVerticalPadding: 34.sp,
         onTap: () {
           // Get.toNamed(ASSETS, arguments: title);
           context.navigator.navigateTo('$ASSETS/$title');

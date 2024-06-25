@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomLisView extends StatefulWidget {
   final String? mainTitle;
@@ -17,12 +18,12 @@ class _CustomLisViewState extends State<CustomLisView> {
       children: [
         if (widget.mainTitle != null)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 8.0.sp),
             child: Text(widget.mainTitle!),
           ),
         ListView.builder(
           itemCount: widget.list.length,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: 8.sp),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (_, index) {
