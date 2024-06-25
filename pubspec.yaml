@@ -11,11 +11,7 @@ dependencies:
   google_fonts:
   flutter_screenutil:
   auto_route:
-  flutter_treeview: ^1.0.7+1
-  isar:
-  isar_flutter_libs:
-  json_annotation:
-  path_provider:
+  json_annotation: ^4.9.0
   get_it:
   injectable:
   copy_with_extension:
@@ -29,9 +25,8 @@ dev_dependencies:
     sdk: flutter
   auto_route_generator:
   injectable_generator:
-  json_serializable:
+  json_serializable: ^6.8.0
   copy_with_extension_gen:
-  isar_generator:
   build_runner:
 
 flutter: 

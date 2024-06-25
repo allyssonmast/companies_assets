@@ -21,7 +21,7 @@ class TreeNodeWidget extends StatelessWidget {
       return ListTile(
         title: Text(node.label),
         leading:
-            node.icon != null ? Icon(node.icon, color: node.iconColor) : null,
+            node.icon != null ? Icon(node.icon) : null,
         subtitle: node.sensorType != null ? Text(node.sensorType!) : null,
         trailing: node.status != null ? Icon(iconData[node.status]) : null,
       );
@@ -31,7 +31,7 @@ class TreeNodeWidget extends StatelessWidget {
       key: PageStorageKey<NodeTree>(node),
       title: Text(node.label),
       leading:
-          node.icon != null ? Icon(node.icon, color: node.iconColor) : null,
+          node.icon != null ? Icon(node.icon) : null,
       subtitle: node.sensorType != null ? Text(node.sensorType!) : null,
       trailing: node.status != null ? Text(node.status!) : null,
       children: node.children.map(_buildNode).toList(),
