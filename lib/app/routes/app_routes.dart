@@ -7,6 +7,7 @@ abstract class Routes {
   static const ASSETS = _Paths.ASSETS;
   static const NEW_ASSSET = _Paths.NEW_ASSSET;
   static const CONFIG = _Paths.CONFIG;
+  static const DASHBOARD = _Paths.DASHBOARD;
 }
 
 abstract class _Paths {
@@ -15,4 +16,5 @@ abstract class _Paths {
   static const ASSETS = '/assets';
   static const NEW_ASSSET = '/new-assset';
   static const CONFIG = '/config';
+  static const DASHBOARD = '/dashboard';
 }

@@ -1,4 +1,4 @@
-const DASHBOARD = '/dashboard';
+const DASHBOARD = '/dashboard2';
 const HOME = 'home';
 const CONFIG = 'config';
 const NEWASSET = 'new-asset';

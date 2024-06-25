@@ -13,12 +13,16 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     var list = ['Jaguar', 'Tobias', 'Apex'];
-    return ListView.builder(
-      itemCount: list.length,
-      padding: EdgeInsets.all(8.sp),
-      itemBuilder: (_, index) {
-        return CompanyCard(title: list[index]);
-      },
+    return Scaffold(
+      body: SafeArea(
+        child: ListView.builder(
+          itemCount: list.length,
+          padding: EdgeInsets.all(8.sp),
+          itemBuilder: (_, index) {
+            return CompanyCard(title: list[index]);
+          },
+        ),
+      ),
     );
   }
 }

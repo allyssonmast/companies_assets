@@ -16,7 +16,7 @@ class AssetsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AssetsController>(
-      init: getIt<AssetsController>()..changeCompanyId(companyId ?? ''),
+      //init: getIt<AssetsController>()..changeCompanyId(companyId ?? ''),
       builder: (controller) => Scaffold(
         appBar: _buildAppBar(controller),
         body: _buildBody(controller),

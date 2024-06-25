@@ -27,14 +27,14 @@ class _MyAppState extends State<MyApp> {
       builder: (context, child) {
         return NavigationProvider(
           navigationService: _navigationService,
-          child: GetMaterialApp.router(
+          child: GetMaterialApp(
             title: "Companies Assets",
-            //initialRoute: Routes.HOME,
+            initialRoute: Routes.HOME,
             getPages: AppPages.routes,
             debugShowCheckedModeBanner: false,
             themeMode: ThemeMode.system,
-           routeInformationParser: _navigationService.router.defaultRouteParser(),
-            routerDelegate: _navigationService.router.delegate(),
+            //routeInformationParser: _navigationService.router.defaultRouteParser(),
+            //routerDelegate: _navigationService.router.delegate(),
             theme: lightTheme,
             darkTheme: darkTheme,
             translations: TranslationService(),

@@ -4,6 +4,8 @@ import '../modules/assets/bindings/assets_binding.dart';
 import '../modules/assets/views/assets_view.dart';
 import '../modules/config/bindings/config_binding.dart';
 import '../modules/config/views/config_view.dart';
+import '../modules/dashboard/bindings/dashboard_binding.dart';
+import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/new_assset/bindings/new_assset_binding.dart';
@@ -36,6 +38,11 @@ class AppPages {
       name: _Paths.CONFIG,
       page: () => const ConfigView(),
       binding: ConfigBinding(),
+    ),
+    GetPage(
+      name: _Paths.DASHBOARD,
+      page: () => const DashboardPage(),
+      binding: DashboardBinding(),
     ),
   ];
 }

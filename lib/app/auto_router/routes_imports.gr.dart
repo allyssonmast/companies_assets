@@ -13,7 +13,7 @@ import 'package:companies_assets/app/modules/assets/views/assets_view.dart'
     as _i1;
 import 'package:companies_assets/app/modules/config/views/config_view.dart'
     as _i2;
-import 'package:companies_assets/app/modules/dashboard/dashboard_page.dart'
+import 'package:companies_assets/app/modules/dashboard/views/dashboard_view.dart'
     as _i3;
 import 'package:companies_assets/app/modules/home/views/home_view.dart' as _i4;
 import 'package:companies_assets/app/modules/new_assset/views/new_assset_view.dart'

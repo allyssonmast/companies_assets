@@ -10,8 +10,8 @@ class AssetsController extends GetxController {
   final Repository _repository;
   final FilterNodes filterNodes;
   final RxString errorMessage = ''.obs;
-  //var companyId = Get.arguments;
-  var companyId = ''.obs;
+  var companyId = Get.arguments;
+  //var companyId = ''.obs;
   final RxBool isLoading = false.obs;
   final RxInt selectedChoice = 0.obs;
   var searchController = TextEditingController();
@@ -23,7 +23,7 @@ class AssetsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadTreeNodes(companyId.value);
+    loadTreeNodes(companyId);
   }
 
   void changeCompanyId(String company) => companyId.value = company;
