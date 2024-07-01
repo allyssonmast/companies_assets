@@ -12,19 +12,32 @@ class TreeNodeWidget extends StatelessWidget {
     return _buildNode(node);
   }
 
+  static final iconData = {
+    'operating': Icons.hourglass_empty,
+    'alert': Icons.warning_amber,
+  };
+
+  static final Map<String, Widget> iconCache = {};
+  static final Map<String, Widget> textCache = {};
+
   Widget _buildIcon(IconData? iconData) {
-    return iconData != null ? Icon(iconData) : Container();
+    return iconData != null ? Icon(iconData) : SizedBox.shrink();
   }
 
   Widget _buildNode(NodeTree node) {
-    var iconData = {
-      'operating': Icons.hourglass_empty,
-      'alert': Icons.warning_amber
-    };
-
     Widget leadingIcon = _buildIcon(node.icon);
-    Widget? subtitle = node.sensorType != null ? Text(node.sensorType!) : null;
-    Widget? trailing = node.status != null ? Icon(iconData[node.status]) : null;
+
+    Widget? subtitle;
+    if (node.sensorType != null) {
+      subtitle =
+          textCache.putIfAbsent(node.sensorType!, () => Text(node.sensorType!));
+    }
+
+    Widget? trailing;
+    if (node.status != null) {
+      trailing = iconCache.putIfAbsent(
+          node.status!, () => Icon(iconData[node.status]));
+    }
 
     if (node.children.isEmpty) {
       return ListTile(
@@ -36,12 +49,25 @@ class TreeNodeWidget extends StatelessWidget {
     }
 
     return ExpansionTile(
-      key: PageStorageKey<NodeTree>(node),
       title: Text(node.label),
       leading: leadingIcon,
       subtitle: subtitle,
       trailing: trailing,
-      children: node.children.map(_buildNode).toList(),
+      children: [
+        CustomScrollView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate((_, index) {
+                return TreeNodeWidget(
+                  node: node.children[index],
+                );
+              }, childCount: node.children.length),
+            )
+          ],
+        )
+      ],
     );
   }
 }

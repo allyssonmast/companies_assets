@@ -59,11 +59,19 @@ class AssetsView extends StatelessWidget {
     } else if (controller.treeNodes.isEmpty) {
       return const Center(child: Text('Nenhum Asset encontrado'));
     } else {
-      return ListView.builder(
-        itemCount: controller.treeNodes.length,
-        itemBuilder: (_, index) => TreeNodeWidget(
-          node: controller.treeNodes[index],
-        ),
+      return CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return TreeNodeWidget(
+                  node: controller.treeNodes[index],
+                );
+              },
+              childCount: controller.treeNodes.length,
+            ),
+          ),
+        ],
       );
     }
   }

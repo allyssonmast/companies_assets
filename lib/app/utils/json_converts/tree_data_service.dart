@@ -4,16 +4,15 @@ import '../../modules/assets/models/tree_node.dart';
 
 @injectable
 class TreeDataConvert {
+  void addToMap(Map<String, List<Map<String, dynamic>>> map, String key,
+      Map<String, dynamic> value) {
+    (map[key] ??= []).add(value);
+  }
+
   List<NodeTree> buildTree(
       List<Map<String, dynamic>> locations, List<Map<String, dynamic>> assets) {
-
     final Map<String, List<Map<String, dynamic>>> locationAssetsMap = {};
     final Map<String, List<Map<String, dynamic>>> parentAssetsMap = {};
-
-    void addToMap(Map<String, List<Map<String, dynamic>>> map, String key,
-        Map<String, dynamic> value) {
-      map.putIfAbsent(key, () => []).add(value);
-    }
 
     for (var asset in assets) {
       final locationId = asset['locationId'];
